@@ -6,11 +6,16 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
+@CircuitBreaker(
+        name = "accountService",
+        fallbackMethod = "applyTransactionFallback"
+)
 public class AccountServiceClient implements AccountGateway {
 
     private final RestClient restClient;
@@ -77,5 +82,32 @@ public class AccountServiceClient implements AccountGateway {
                     exception
             );
         }
+    }
+
+    private AccountTransactionResponse applyTransactionFallback(
+            EventRecord event,
+            Throwable throwable
+    ) {
+        log.atWarn()
+                .addKeyValue("eventId", event.getEventId())
+                .addKeyValue("accountId", event.getAccountId())
+                .addKeyValue(
+                        "downstreamService",
+                        "account-service"
+                )
+                .addKeyValue(
+                        "failureType",
+                        throwable.getClass().getSimpleName()
+                )
+                .log("Circuit breaker fallback invoked");
+
+        if (throwable instanceof AccountServiceUnavailableException exception) {
+            throw exception;
+        }
+
+        throw new AccountServiceUnavailableException(
+                "Account Service is temporarily unavailable",
+                throwable
+        );
     }
 }
