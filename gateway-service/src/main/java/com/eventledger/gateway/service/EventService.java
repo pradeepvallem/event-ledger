@@ -12,6 +12,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.eventledger.gateway.observability.EventMetrics;
+import com.eventledger.gateway.domain.EventStatus;
+import com.eventledger.gateway.exception.EventNotAppliedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,51 +70,16 @@ public class EventService {
 
 
         if (existing != null) {
-            try {
-                replayValidator.validateIdenticalReplay(
-                        existing,
-                        normalized
-                );
-            } catch (ConflictingEventException exception) {
-                eventMetrics.recordConflict();
-                throw exception;
-            }
-
-            eventMetrics.recordReplayed();
-
-            log.atInfo()
-                    .addKeyValue("eventId", normalized.eventId())
-                    .addKeyValue("idempotentReplay", true)
-                    .log("Returning existing event");
-
-            return new EventSubmissionResult(
-                    eventMapper.toResponse(existing, true),
-                    false
-            );
+            return handleExistingEvent(existing, normalized);
         }
 
         SavedEvent savedEvent =
                 insertEventRaceSafely(normalized);
 
         if (!savedEvent.created()) {
-            try {
-                replayValidator.validateIdenticalReplay(
-                        savedEvent.event(),
-                        normalized
-                );
-            } catch (ConflictingEventException exception) {
-                eventMetrics.recordConflict();
-                throw exception;
-            }
-
-            eventMetrics.recordReplayed();
-
-            return new EventSubmissionResult(
-                    eventMapper.toResponse(
-                            savedEvent.event(),
-                            true
-                    ),
-                    false
+            return handleExistingEvent(
+                    savedEvent.event(),
+                    normalized
             );
         }
 
@@ -248,6 +215,42 @@ public class EventService {
                 request.metadata() == null
                         ? Map.of()
                         : Map.copyOf(request.metadata())
+        );
+    }
+
+    private EventSubmissionResult handleExistingEvent(
+            EventRecord existing,
+            NormalizedEvent normalized
+    ) {
+        try {
+            replayValidator.validateIdenticalReplay(
+                    existing,
+                    normalized
+            );
+        } catch (ConflictingEventException exception) {
+            eventMetrics.recordConflict();
+            throw exception;
+        }
+
+        eventMetrics.recordReplayed();
+
+        if (existing.getStatus() != EventStatus.APPLIED) {
+            throw new EventNotAppliedException(
+                    existing.getEventId(),
+                    existing.getStatus(),
+                    existing.getLastFailureReason()
+            );
+        }
+
+        log.atInfo()
+                .addKeyValue("eventId", existing.getEventId())
+                .addKeyValue("eventStatus", existing.getStatus())
+                .addKeyValue("idempotentReplay", true)
+                .log("Returning applied event replay");
+
+        return new EventSubmissionResult(
+                eventMapper.toResponse(existing, true),
+                false
         );
     }
 

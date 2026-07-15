@@ -8,6 +8,7 @@ import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.domain.EventStatus;
 import com.eventledger.gateway.domain.TransactionType;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
+import com.eventledger.gateway.exception.EventNotAppliedException;
 import com.eventledger.gateway.exception.EventNotFoundException;
 import com.eventledger.gateway.observability.EventMetrics;
 import com.eventledger.gateway.repository.EventRecordRepository;
@@ -147,6 +148,9 @@ class EventServiceTest {
     void shouldReturnExistingIdempotentReplay() {
         SubmitEventRequest request = request();
         EventRecord existing = receivedEvent();
+        existing.markApplied(
+                Instant.parse("2026-07-15T08:00:00Z")
+        );
 
         EventResponse response = response(
                 EventStatus.APPLIED,
@@ -190,6 +194,9 @@ class EventServiceTest {
     void shouldRecoverFromConcurrentInsert() {
         SubmitEventRequest request = request();
         EventRecord concurrentEvent = receivedEvent();
+        concurrentEvent.markApplied(
+                Instant.parse("2026-07-15T08:00:00Z")
+        );
 
         EventResponse response = response(
                 EventStatus.APPLIED,
@@ -316,6 +323,63 @@ class EventServiceTest {
                 .hasMessage("Event not found: evt-missing");
 
         verifyNoInteractions(eventMapper);
+    }
+
+    @Test
+    @DisplayName(
+            "returns service unavailable for an identical failed-event replay"
+    )
+    void shouldRejectReplayOfFailedEvent() {
+        SubmitEventRequest request = request();
+
+        EventRecord failedEvent = receivedEvent();
+        failedEvent.markFailed("Account Service is unavailable");
+
+        when(eventRepository.findById(EVENT_ID))
+                .thenReturn(Optional.of(failedEvent));
+
+        assertThatThrownBy(() ->
+                eventService.submitEvent(request)
+        )
+                .isInstanceOf(EventNotAppliedException.class)
+                .hasMessageContaining(EVENT_ID)
+                .hasMessageContaining("Account Service is unavailable");
+
+        verify(replayValidator)
+                .validateIdenticalReplay(
+                        any(EventRecord.class),
+                        any(NormalizedEvent.class)
+                );
+
+        verify(eventMetrics).recordReplayed();
+
+        verifyNoInteractions(
+                persistenceService,
+                accountGateway,
+                metadataConverter,
+                eventMapper
+        );
+    }
+
+    @Test
+    @DisplayName(
+            "returns service unavailable for an event still marked received"
+    )
+    void shouldRejectReplayOfReceivedEvent() {
+        SubmitEventRequest request = request();
+        EventRecord receivedEvent = receivedEvent();
+
+        when(eventRepository.findById(EVENT_ID))
+                .thenReturn(Optional.of(receivedEvent));
+
+        assertThatThrownBy(() ->
+                eventService.submitEvent(request)
+        )
+                .isInstanceOf(EventNotAppliedException.class)
+                .hasMessageContaining("RECEIVED");
+
+        verify(eventMetrics).recordReplayed();
+        verifyNoInteractions(accountGateway);
     }
 
     @Test

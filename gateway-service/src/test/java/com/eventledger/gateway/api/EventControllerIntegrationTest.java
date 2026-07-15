@@ -376,6 +376,78 @@ class EventControllerIntegrationTest {
                 );
     }
 
+    @Test
+    @DisplayName(
+            "returns 503 when replaying an event that previously failed"
+    )
+    void shouldReturnServiceUnavailableForFailedReplay()
+            throws Exception {
+
+        when(accountGateway.applyTransaction(any()))
+                .thenThrow(
+                        new AccountServiceUnavailableException(
+                                "Account Service is unavailable",
+                                new RuntimeException("connection refused")
+                        )
+                );
+
+        String body = validEventJson("evt-failed-replay");
+
+        mockMvc.perform(
+                        post("/events")
+                                .contentType("application/json")
+                                .content(body)
+                )
+                .andExpect(status().isServiceUnavailable());
+
+        /*
+         * The second request must not call Account Service again.
+         * It returns the status of the stored failed event.
+         */
+        mockMvc.perform(
+                        post("/events")
+                                .contentType("application/json")
+                                .content(body)
+                )
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.status").value(503))
+                .andExpect(
+                        jsonPath("$.validationErrors.eventId")
+                                .value("evt-failed-replay")
+                )
+                .andExpect(
+                        jsonPath("$.validationErrors.eventStatus")
+                                .value("FAILED")
+                );
+
+        mockMvc.perform(
+                        get(
+                                "/events/{eventId}",
+                                "evt-failed-replay"
+                        )
+                )
+                .andExpect(status().isOk())
+                .andExpect(
+                        jsonPath("$.eventId")
+                                .value("evt-failed-replay")
+                )
+                .andExpect(jsonPath("$.status").value("FAILED"));
+
+        mockMvc.perform(
+                        get("/events")
+                                .queryParam("account", "acct-123")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].status").value("FAILED"));
+
+        verify(
+                accountGateway,
+                times(1)
+        ).applyTransaction(any(EventRecord.class));
+
+        assertThat(eventRepository.count()).isEqualTo(1);
+    }
+
     private void submit(String body) throws Exception {
         mockMvc.perform(
                         post("/events")
