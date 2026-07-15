@@ -1,4 +1,5 @@
 com/eventledger/gateway/service/EventPersistenceService.class
+com/eventledger/gateway/exception/EventNotAppliedException.class
 com/eventledger/gateway/exception/EventNotFoundException.class
 com/eventledger/gateway/service/EventReplayValidator.class
 com/eventledger/gateway/domain/TransactionType.class

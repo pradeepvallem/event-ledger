@@ -1,4 +1,5 @@
 com/eventledger/gateway/service/EventMapperTest.class
+com/eventledger/gateway/resilience/AccountServiceCircuitBreakerIntegrationTest.class
 com/eventledger/gateway/api/EventControllerIntegrationTest.class
 com/eventledger/gateway/observability/EventMetricsTest.class
 com/eventledger/gateway/repository/EventRecordRepositoryTest.class

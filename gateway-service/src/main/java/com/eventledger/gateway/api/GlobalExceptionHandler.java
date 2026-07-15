@@ -3,6 +3,7 @@ package com.eventledger.gateway.api;
 import com.eventledger.gateway.api.dto.ApiErrorResponse;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.exception.ConflictingEventException;
+import com.eventledger.gateway.exception.EventNotAppliedException;
 import com.eventledger.gateway.exception.EventNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -169,6 +170,22 @@ public class GlobalExceptionHandler {
                 "An unexpected internal error occurred",
                 request,
                 Map.of()
+        );
+    }
+
+    @ExceptionHandler(EventNotAppliedException.class)
+    public ResponseEntity<ApiErrorResponse> handleEventNotApplied(
+            EventNotAppliedException exception,
+            HttpServletRequest request
+    ) {
+        return build(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                exception.getMessage(),
+                request,
+                Map.of(
+                        "eventId", exception.getEventId(),
+                        "eventStatus", exception.getEventStatus().name()
+                )
         );
     }
 
