@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 @Component
-public class AccountServiceClient {
+public class AccountServiceClient implements AccountGateway {
 
     private final RestClient restClient;
 
@@ -16,6 +16,7 @@ public class AccountServiceClient {
         this.restClient = accountServiceRestClient;
     }
 
+    @Override
     public AccountTransactionResponse applyTransaction(
             EventRecord event
     ) {

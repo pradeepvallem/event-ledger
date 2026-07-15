@@ -24,4 +24,5 @@ com/eventledger/gateway/api/dto/EventResponse.class
 com/eventledger/gateway/client/ApplyTransactionRequest.class
 com/eventledger/gateway/api/EventController.class
 com/eventledger/gateway/repository/EventRecordRepository.class
+com/eventledger/gateway/client/AccountGateway.class
 com/eventledger/gateway/api/GlobalExceptionHandler.class

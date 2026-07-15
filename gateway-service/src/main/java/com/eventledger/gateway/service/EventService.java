@@ -2,6 +2,7 @@ package com.eventledger.gateway.service;
 
 import com.eventledger.gateway.api.dto.EventResponse;
 import com.eventledger.gateway.api.dto.SubmitEventRequest;
+import com.eventledger.gateway.client.AccountGateway;
 import com.eventledger.gateway.client.AccountServiceClient;
 import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
@@ -20,7 +21,7 @@ public class EventService {
 
     private final EventRecordRepository eventRepository;
     private final EventPersistenceService persistenceService;
-    private final AccountServiceClient accountServiceClient;
+    private final AccountGateway accountGateway;
     private final MetadataConverter metadataConverter;
     private final EventMapper eventMapper;
     private final EventReplayValidator replayValidator;
@@ -28,14 +29,14 @@ public class EventService {
     public EventService(
             EventRecordRepository eventRepository,
             EventPersistenceService persistenceService,
-            AccountServiceClient accountServiceClient,
+            AccountGateway accountGateway,
             MetadataConverter metadataConverter,
             EventMapper eventMapper,
             EventReplayValidator replayValidator
     ) {
         this.eventRepository = eventRepository;
         this.persistenceService = persistenceService;
-        this.accountServiceClient = accountServiceClient;
+        this.accountGateway = accountGateway;
         this.metadataConverter = metadataConverter;
         this.eventMapper = eventMapper;
         this.replayValidator = replayValidator;
@@ -83,7 +84,7 @@ public class EventService {
         EventRecord event = savedEvent.event();
 
         try {
-            accountServiceClient.applyTransaction(event);
+            accountGateway.applyTransaction(event);
 
             persistenceService.markApplied(event.getEventId());
 

@@ -2,7 +2,7 @@ package com.eventledger.gateway.service;
 
 import com.eventledger.gateway.api.dto.EventResponse;
 import com.eventledger.gateway.api.dto.SubmitEventRequest;
-import com.eventledger.gateway.client.AccountServiceClient;
+import com.eventledger.gateway.client.AccountGateway;
 import com.eventledger.gateway.client.AccountTransactionResponse;
 import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.domain.EventStatus;
@@ -50,7 +50,7 @@ class EventServiceTest {
     private EventPersistenceService persistenceService;
 
     @Mock
-    private AccountServiceClient accountServiceClient;
+    private AccountGateway accountGateway;
 
     @Mock
     private MetadataConverter metadataConverter;
@@ -68,7 +68,7 @@ class EventServiceTest {
         eventService = new EventService(
                 eventRepository,
                 persistenceService,
-                accountServiceClient,
+                accountGateway,
                 metadataConverter,
                 eventMapper,
                 replayValidator
@@ -103,7 +103,7 @@ class EventServiceTest {
         when(persistenceService.insert(any(EventRecord.class)))
                 .thenReturn(receivedEvent);
 
-        when(accountServiceClient.applyTransaction(receivedEvent))
+        when(accountGateway.applyTransaction(receivedEvent))
                 .thenReturn(accountResponse());
 
         when(eventMapper.toResponse(appliedEvent, false))
@@ -121,7 +121,7 @@ class EventServiceTest {
         verify(persistenceService).insert(
                 any(EventRecord.class)
         );
-        verify(accountServiceClient)
+        verify(accountGateway)
                 .applyTransaction(receivedEvent);
         verify(persistenceService)
                 .markApplied(EVENT_ID);
@@ -163,7 +163,7 @@ class EventServiceTest {
 
         verifyNoInteractions(
                 persistenceService,
-                accountServiceClient,
+                accountGateway,
                 metadataConverter
         );
     }
@@ -213,7 +213,7 @@ class EventServiceTest {
                         any(NormalizedEvent.class)
                 );
 
-        verifyNoInteractions(accountServiceClient);
+        verifyNoInteractions(accountGateway);
     }
 
     @Test
@@ -239,7 +239,7 @@ class EventServiceTest {
                         new RuntimeException("connection refused")
                 );
 
-        when(accountServiceClient.applyTransaction(event))
+        when(accountGateway.applyTransaction(event))
                 .thenThrow(exception);
 
         assertThatThrownBy(() ->

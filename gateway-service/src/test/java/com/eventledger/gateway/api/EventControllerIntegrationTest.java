@@ -1,6 +1,6 @@
 package com.eventledger.gateway.api;
 
-import com.eventledger.gateway.client.AccountServiceClient;
+import com.eventledger.gateway.client.AccountGateway;
 import com.eventledger.gateway.client.AccountTransactionResponse;
 import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.domain.EventStatus;
@@ -44,12 +44,12 @@ class EventControllerIntegrationTest {
     private EventRecordRepository eventRepository;
 
     @MockitoBean
-    private AccountServiceClient accountServiceClient;
+    private AccountGateway accountGateway;
 
     @BeforeEach
     void setUp() {
         eventRepository.deleteAll();
-        reset(accountServiceClient);
+        reset(accountGateway);
     }
 
     @Test
@@ -57,7 +57,7 @@ class EventControllerIntegrationTest {
             "accepts, stores and applies a valid event"
     )
     void shouldSubmitNewEvent() throws Exception {
-        when(accountServiceClient.applyTransaction(any()))
+        when(accountGateway.applyTransaction(any()))
                 .thenReturn(accountResponse("evt-001"));
 
         mockMvc.perform(
@@ -85,7 +85,7 @@ class EventControllerIntegrationTest {
                 .isEqualTo(EventStatus.APPLIED);
         assertThat(stored.getAppliedAt()).isNotNull();
 
-        verify(accountServiceClient)
+        verify(accountGateway)
                 .applyTransaction(any(EventRecord.class));
     }
 
@@ -94,7 +94,7 @@ class EventControllerIntegrationTest {
             "returns the original event for an identical replay"
     )
     void shouldHandleIdenticalReplay() throws Exception {
-        when(accountServiceClient.applyTransaction(any()))
+        when(accountGateway.applyTransaction(any()))
                 .thenReturn(accountResponse("evt-duplicate"));
 
         String body = validEventJson("evt-duplicate");
@@ -123,7 +123,7 @@ class EventControllerIntegrationTest {
         assertThat(eventRepository.count()).isEqualTo(1);
 
         verify(
-                accountServiceClient,
+                accountGateway,
                 times(1)
         ).applyTransaction(any(EventRecord.class));
     }
@@ -133,7 +133,7 @@ class EventControllerIntegrationTest {
             "rejects reuse of an event ID with different data"
     )
     void shouldRejectConflictingReplay() throws Exception {
-        when(accountServiceClient.applyTransaction(any()))
+        when(accountGateway.applyTransaction(any()))
                 .thenReturn(accountResponse("evt-conflict"));
 
         mockMvc.perform(
@@ -176,7 +176,7 @@ class EventControllerIntegrationTest {
         assertThat(eventRepository.count()).isEqualTo(1);
 
         verify(
-                accountServiceClient,
+                accountGateway,
                 times(1)
         ).applyTransaction(any(EventRecord.class));
     }
@@ -186,7 +186,7 @@ class EventControllerIntegrationTest {
             "returns events in chronological order"
     )
     void shouldListEventsChronologically() throws Exception {
-        when(accountServiceClient.applyTransaction(any()))
+        when(accountGateway.applyTransaction(any()))
                 .thenAnswer(invocation -> {
                     EventRecord event = invocation.getArgument(0);
                     return accountResponse(event.getEventId());
@@ -240,7 +240,7 @@ class EventControllerIntegrationTest {
     void shouldStoreFailedEventWhenAccountServiceUnavailable()
             throws Exception {
 
-        when(accountServiceClient.applyTransaction(any()))
+        when(accountGateway.applyTransaction(any()))
                 .thenThrow(
                         new AccountServiceUnavailableException(
                                 "Account Service is unavailable",
