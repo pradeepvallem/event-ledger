@@ -27,6 +27,15 @@ server:
   port: 8081
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  otlp:
+    tracing:
+      export:
+        enabled: false
+
   endpoints:
     web:
       exposure:
@@ -35,3 +44,21 @@ management:
   endpoint:
     health:
       show-details: always
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+    ecs:
+      service:
+        name: ${spring.application.name}
+        version: 1.0.0
+        environment: local
+
+    json:
+      stacktrace:
+        root: first
+        max-length: 4096
+        max-throwable-depth: 20
+        include-common-frames: false

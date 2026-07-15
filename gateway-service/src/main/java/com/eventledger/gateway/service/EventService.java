@@ -3,7 +3,6 @@ package com.eventledger.gateway.service;
 import com.eventledger.gateway.api.dto.EventResponse;
 import com.eventledger.gateway.api.dto.SubmitEventRequest;
 import com.eventledger.gateway.client.AccountGateway;
-import com.eventledger.gateway.client.AccountServiceClient;
 import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.exception.EventNotFoundException;
@@ -11,6 +10,9 @@ import com.eventledger.gateway.repository.EventRecordRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +27,9 @@ public class EventService {
     private final MetadataConverter metadataConverter;
     private final EventMapper eventMapper;
     private final EventReplayValidator replayValidator;
+
+    private static final Logger log =
+            LoggerFactory.getLogger(EventService.class);
 
     public EventService(
             EventRecordRepository eventRepository,
@@ -46,10 +51,16 @@ public class EventService {
             SubmitEventRequest request
     ) {
         NormalizedEvent normalized = normalize(request);
+        log.atInfo()
+                .addKeyValue("eventId", normalized.eventId())
+                .addKeyValue("accountId", normalized.accountId())
+                .addKeyValue("transactionType", normalized.type())
+                .log("Processing event");
 
         EventRecord existing =
                 eventRepository.findById(normalized.eventId())
                         .orElse(null);
+
 
         if (existing != null) {
             replayValidator.validateIdenticalReplay(
@@ -82,6 +93,11 @@ public class EventService {
         }
 
         EventRecord event = savedEvent.event();
+        log.atInfo()
+                .addKeyValue("eventId", event.getEventId())
+                .addKeyValue("accountId", event.getAccountId())
+                .addKeyValue("eventStatus", "APPLIED")
+                .log("Event applied successfully");
 
         try {
             accountGateway.applyTransaction(event);

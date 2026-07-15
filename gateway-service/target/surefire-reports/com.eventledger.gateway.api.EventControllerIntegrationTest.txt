@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.eventledger.gateway.api.EventControllerIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.582 s -- in com.eventledger.gateway.api.EventControllerIntegrationTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.612 s -- in com.eventledger.gateway.api.EventControllerIntegrationTest

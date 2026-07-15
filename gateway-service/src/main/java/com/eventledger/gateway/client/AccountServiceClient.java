@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class AccountServiceClient implements AccountGateway {
 
@@ -15,6 +18,9 @@ public class AccountServiceClient implements AccountGateway {
     public AccountServiceClient(RestClient accountServiceRestClient) {
         this.restClient = accountServiceRestClient;
     }
+
+    private static final Logger log =
+            LoggerFactory.getLogger(AccountServiceClient.class);
 
     @Override
     public AccountTransactionResponse applyTransaction(
@@ -29,8 +35,17 @@ public class AccountServiceClient implements AccountGateway {
                         event.getEventTimestamp()
                 );
 
+        log.atInfo()
+                .addKeyValue("eventId", event.getEventId())
+                .addKeyValue("accountId", event.getAccountId())
+                .addKeyValue(
+                        "downstreamService",
+                        "account-service"
+                )
+                .log("Calling downstream service");
+
         try {
-            return restClient
+            AccountTransactionResponse response =  restClient
                     .post()
                     .uri(
                             "/accounts/{accountId}/transactions",
@@ -49,6 +64,11 @@ public class AccountServiceClient implements AccountGateway {
                             }
                     )
                     .body(AccountTransactionResponse.class);
+            log.info(
+                    "Account Service applied eventId={}",
+                    event.getEventId()
+            );
+            return response;
         } catch (AccountServiceUnavailableException exception) {
             throw exception;
         } catch (RestClientException exception) {
