@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.eventledger.gateway.GatewayServiceApplicationTests" time="2.005" tests="1" errors="0" skipped="0" failures="0" flakes="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="1.849" tests="5" errors="0" skipped="0" failures="0" flakes="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -50,7 +50,6 @@
     <property name="localRepository" value="/Users/pradeepvallam/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/corretto/corretto-21/issues/"/>
     <property name="java.io.tmpdir" value="/var/folders/8b/n21v5xc13jb7xc4q68kb9wb00000gn/T/"/>
-    <property name="com.zaxxer.hikari.pool_number" value="1"/>
     <property name="java.version" value="21.0.11"/>
     <property name="user.dir" value="/Users/pradeepvallam/Downloads/event-ledger/gateway-service"/>
     <property name="os.arch" value="aarch64"/>
@@ -68,9 +67,9 @@
     <property name="java.class.version" value="65.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[gateway-service] "/>
   </properties>
-  <testcase name="contextLoads" classname="com.eventledger.gateway.GatewayServiceApplicationTests" time="0.004">
-    <system-out><![CDATA[2026-07-15T02:10:41.923-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.eventledger.gateway.GatewayServiceApplicationTests]: GatewayServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2026-07-15T02:10:41.928-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.eventledger.gateway.GatewayServiceApplication for test class com.eventledger.gateway.GatewayServiceApplicationTests
+  <testcase name="shouldRejectDuplicateEventId" classname="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="0.329">
+    <system-out><![CDATA[02:10:40.135 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.eventledger.gateway.repository.EventRecordRepositoryTest]: EventRecordRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+02:10:40.192 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.eventledger.gateway.GatewayServiceApplication for test class com.eventledger.gateway.repository.EventRecordRepositoryTest
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -81,29 +80,272 @@
 
  :: Spring Boot ::               (v3.5.13)
 
-2026-07-15T02:10:41.946-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : Starting GatewayServiceApplicationTests using Java 21.0.11 with PID 52034 (started by pradeepvallam in /Users/pradeepvallam/Downloads/event-ledger/gateway-service)
-2026-07-15T02:10:41.946-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : No active profile set, falling back to 1 default profile: "default"
-2026-07-15T02:10:42.243-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-07-15T02:10:42.248-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 1 JPA repository interface.
-2026-07-15T02:10:42.575-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-07-15T02:10:42.576-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-07-15T02:10:42.580-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-07-15T02:10:42.581-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-07-15T02:10:42.586-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn9: url=jdbc:h2:mem:gatewaydb user=SA
-2026-07-15T02:10:42.587-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-07-15T02:10:42.591-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+2026-07-15T02:10:40.371-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.r.EventRecordRepositoryTest        : Starting EventRecordRepositoryTest using Java 21.0.11 with PID 52034 (started by pradeepvallam in /Users/pradeepvallam/Downloads/event-ledger/gateway-service)
+2026-07-15T02:10:40.372-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.r.EventRecordRepositoryTest        : No active profile set, falling back to 1 default profile: "default"
+2026-07-15T02:10:40.522-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-15T02:10:40.546-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 20 ms. Found 1 JPA repository interface.
+2026-07-15T02:10:40.571-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2026-07-15T02:10:40.614-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:fdb19303-908e-4f57-91f9-9387d2b28cb0;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2026-07-15T02:10:40.733-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-15T02:10:40.760-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.45.Final
+2026-07-15T02:10:40.781-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-07-15T02:10:40.907-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-15T02:10:40.945-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactory$EmbeddedDataSourceProxy@4c56644f']
 	Database driver: undefined/unknown
 	Database version: 2.3.232
 	Autocommit mode: undefined/unknown
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-07-15T02:10:42.607-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-07-15T02:10:42.610-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-07-15T02:10:43.770-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:gatewaydb'
-2026-07-15T02:10:43.811-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoints beneath base path '/actuator'
-2026-07-15T02:10:43.869-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : Started GatewayServiceApplicationTests in 1.936 seconds (process running for 4.05)
+2026-07-15T02:10:41.303-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    drop table if exists event_records cascade 
+Hibernate: 
+    create table event_records (
+        amount numeric(19,4) not null,
+        currency varchar(3) not null,
+        applied_at timestamp(6) with time zone,
+        event_timestamp timestamp(6) with time zone not null,
+        received_at timestamp(6) with time zone not null,
+        account_id varchar(100) not null,
+        event_id varchar(100) not null,
+        last_failure_reason varchar(1000),
+        event_status enum ('APPLIED','FAILED','RECEIVED') not null,
+        metadata_json CLOB,
+        transaction_type enum ('CREDIT','DEBIT') not null,
+        primary key (event_id)
+    )
+Hibernate: 
+    create index idx_events_account_timestamp 
+       on event_records (account_id, event_timestamp)
+Hibernate: 
+    create index idx_events_status 
+       on event_records (event_status)
+Hibernate: 
+    create index idx_events_received_at 
+       on event_records (received_at)
+2026-07-15T02:10:41.318-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-15T02:10:41.483-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.r.EventRecordRepositoryTest        : Started EventRecordRepositoryTest in 1.262 seconds (process running for 1.664)
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2026-07-15T02:10:41.805-05:00  WARN 52034 --- [gateway-service] [           main] [                                                 ] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 23505, SQLState: 23505
+2026-07-15T02:10:41.806-05:00 ERROR 52034 --- [gateway-service] [           main] [                                                 ] o.h.engine.jdbc.spi.SqlExceptionHelper   : Unique index or primary key violation: "PUBLIC.PRIMARY_KEY_D ON PUBLIC.EVENT_RECORDS(EVENT_ID) VALUES ( /* 1 */ 'evt-duplicate' )"; SQL statement:
+insert into event_records (account_id,amount,applied_at,currency,event_timestamp,last_failure_reason,metadata_json,received_at,event_status,transaction_type,event_id) values (?,?,?,?,?,?,?,?,?,?,?) [23505-232]
+]]></system-out>
+    <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/pradeepvallam/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+  </testcase>
+  <testcase name="shouldInitializePersistenceFields" classname="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="0.028">
+    <system-out><![CDATA[Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+]]></system-out>
+  </testcase>
+  <testcase name="shouldOrderEventsChronologically" classname="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="0.053">
+    <system-out><![CDATA[Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.account_id=? 
+    order by
+        er1_0.event_timestamp,
+        er1_0.event_id
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPersistFailedState" classname="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="0.011">
+    <system-out><![CDATA[Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    update
+        event_records 
+    set
+        applied_at=?,
+        last_failure_reason=?,
+        metadata_json=?,
+        event_status=? 
+    where
+        event_id=?
+]]></system-out>
+  </testcase>
+  <testcase name="shouldPersistAppliedState" classname="com.eventledger.gateway.repository.EventRecordRepositoryTest" time="0.005">
+    <system-out><![CDATA[Hibernate: 
+    select
+        er1_0.event_id,
+        er1_0.account_id,
+        er1_0.amount,
+        er1_0.applied_at,
+        er1_0.currency,
+        er1_0.event_timestamp,
+        er1_0.last_failure_reason,
+        er1_0.metadata_json,
+        er1_0.received_at,
+        er1_0.event_status,
+        er1_0.transaction_type 
+    from
+        event_records er1_0 
+    where
+        er1_0.event_id=?
+Hibernate: 
+    insert 
+    into
+        event_records
+        (account_id, amount, applied_at, currency, event_timestamp, last_failure_reason, metadata_json, received_at, event_status, transaction_type, event_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    update
+        event_records 
+    set
+        applied_at=?,
+        last_failure_reason=?,
+        metadata_json=?,
+        event_status=? 
+    where
+        event_id=?
 ]]></system-out>
   </testcase>
 </testsuite>

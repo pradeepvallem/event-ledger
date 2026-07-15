@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.eventledger.gateway.GatewayServiceApplicationTests" time="2.005" tests="1" errors="0" skipped="0" failures="0" flakes="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.eventledger.gateway.service.EventServiceTest" time="0.533" tests="7" errors="0" skipped="0" failures="0" flakes="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -50,7 +50,7 @@
     <property name="localRepository" value="/Users/pradeepvallam/.m2/repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/corretto/corretto-21/issues/"/>
     <property name="java.io.tmpdir" value="/var/folders/8b/n21v5xc13jb7xc4q68kb9wb00000gn/T/"/>
-    <property name="com.zaxxer.hikari.pool_number" value="1"/>
+    <property name="com.zaxxer.hikari.pool_number" value="2"/>
     <property name="java.version" value="21.0.11"/>
     <property name="user.dir" value="/Users/pradeepvallam/Downloads/event-ledger/gateway-service"/>
     <property name="os.arch" value="aarch64"/>
@@ -68,42 +68,11 @@
     <property name="java.class.version" value="65.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[gateway-service] "/>
   </properties>
-  <testcase name="contextLoads" classname="com.eventledger.gateway.GatewayServiceApplicationTests" time="0.004">
-    <system-out><![CDATA[2026-07-15T02:10:41.923-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.eventledger.gateway.GatewayServiceApplicationTests]: GatewayServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2026-07-15T02:10:41.928-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.eventledger.gateway.GatewayServiceApplication for test class com.eventledger.gateway.GatewayServiceApplicationTests
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::               (v3.5.13)
-
-2026-07-15T02:10:41.946-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : Starting GatewayServiceApplicationTests using Java 21.0.11 with PID 52034 (started by pradeepvallam in /Users/pradeepvallam/Downloads/event-ledger/gateway-service)
-2026-07-15T02:10:41.946-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : No active profile set, falling back to 1 default profile: "default"
-2026-07-15T02:10:42.243-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-07-15T02:10:42.248-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 1 JPA repository interface.
-2026-07-15T02:10:42.575-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-07-15T02:10:42.576-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-07-15T02:10:42.580-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-07-15T02:10:42.581-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-07-15T02:10:42.586-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn9: url=jdbc:h2:mem:gatewaydb user=SA
-2026-07-15T02:10:42.587-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-07-15T02:10:42.591-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
-	Database driver: undefined/unknown
-	Database version: 2.3.232
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-07-15T02:10:42.607-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-07-15T02:10:42.610-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-07-15T02:10:43.770-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:gatewaydb'
-2026-07-15T02:10:43.811-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoints beneath base path '/actuator'
-2026-07-15T02:10:43.869-05:00  INFO 52034 --- [gateway-service] [           main] [                                                 ] c.e.g.GatewayServiceApplicationTests     : Started GatewayServiceApplicationTests in 1.936 seconds (process running for 4.05)
-]]></system-out>
-  </testcase>
+  <testcase name="shouldReturnEventsForAccount" classname="com.eventledger.gateway.service.EventServiceTest" time="0.503"/>
+  <testcase name="shouldPersistAndApplyNewEvent" classname="com.eventledger.gateway.service.EventServiceTest" time="0.007"/>
+  <testcase name="shouldRecoverFromConcurrentInsert" classname="com.eventledger.gateway.service.EventServiceTest" time="0.006"/>
+  <testcase name="shouldReturnEventById" classname="com.eventledger.gateway.service.EventServiceTest" time="0.003"/>
+  <testcase name="shouldMarkEventFailedWhenAccountServiceUnavailable" classname="com.eventledger.gateway.service.EventServiceTest" time="0.004"/>
+  <testcase name="shouldReturnExistingIdempotentReplay" classname="com.eventledger.gateway.service.EventServiceTest" time="0.003"/>
+  <testcase name="shouldThrowWhenEventDoesNotExist" classname="com.eventledger.gateway.service.EventServiceTest" time="0.002"/>
 </testsuite>
