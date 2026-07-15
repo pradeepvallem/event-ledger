@@ -2,6 +2,7 @@
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/api/EventControllerIntegrationTest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/observability/EventMetricsTest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/repository/EventRecordRepositoryTest.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/resilience/AccountServiceCircuitBreakerIntegrationTest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/service/EventMapperTest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/service/EventReplayValidatorTest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/test/java/com/eventledger/gateway/service/EventServiceTest.java
