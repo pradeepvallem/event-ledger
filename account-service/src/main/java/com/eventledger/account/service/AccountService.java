@@ -59,10 +59,7 @@ public class AccountService {
                 request.eventId(),
                 "eventId"
         );
-        log.atInfo()
-                .addKeyValue("eventId", normalizedEventId)
-                .addKeyValue("idempotentReplay", true)
-                .log("Returning existing transaction");
+
         String normalizedCurrency = request.currency()
                 .trim()
                 .toUpperCase(Locale.ROOT);
@@ -79,6 +76,12 @@ public class AccountService {
                     request,
                     normalizedCurrency
             );
+
+            log.atInfo()
+                    .addKeyValue("eventId", normalizedEventId)
+                    .addKeyValue("accountId", normalizedAccountId)
+                    .addKeyValue("idempotentReplay", true)
+                    .log("Returning existing transaction");
 
             return new TransactionApplicationResult(
                     toTransactionResponse(existing, true),
@@ -155,14 +158,10 @@ public class AccountService {
                                 PageRequest.of(0, RECENT_TRANSACTION_LIMIT)
                         );
 
-        /*
-         * The query retrieves the newest 20 efficiently.
-         * Reverse the resulting list so the response is chronological.
-         */
-        Collections.reverse(transactions);
+
 
         List<TransactionResponse> transactionResponses =
-                transactions.stream()
+                transactions.reversed().stream()
                         .map(transaction ->
                                 toTransactionResponse(transaction, false)
                         )

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.web.client.HttpClientErrorException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,11 @@ import org.slf4j.LoggerFactory;
 public class AccountServiceClient implements AccountGateway {
 
     private final RestClient restClient;
+    private final AccountServiceResponseValidator responseValidator;
 
-    public AccountServiceClient(RestClient accountServiceRestClient) {
+    public AccountServiceClient(RestClient accountServiceRestClient, AccountServiceResponseValidator responseValidator) {
         this.restClient = accountServiceRestClient;
+        this.responseValidator = responseValidator;
     }
 
     private static final Logger log =
@@ -73,9 +76,12 @@ public class AccountServiceClient implements AccountGateway {
                     "Account Service applied eventId={}",
                     event.getEventId()
             );
+            responseValidator.validate(event, response);
             return response;
         } catch (AccountServiceUnavailableException exception) {
             throw exception;
+        } catch (HttpClientErrorException clientErrorException) {
+            throw clientErrorException;
         } catch (RestClientException exception) {
             throw new AccountServiceUnavailableException(
                     "Account Service is unavailable",

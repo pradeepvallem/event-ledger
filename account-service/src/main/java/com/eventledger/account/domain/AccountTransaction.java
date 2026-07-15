@@ -15,6 +15,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+import java.util.Locale;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
@@ -116,12 +117,22 @@ public class AccountTransaction {
             String currency,
             Instant eventTimestamp
     ) {
-        this.eventId = eventId;
-        this.account = account;
-        this.type = type;
-        this.amount = amount;
-        this.currency = currency;
-        this.eventTimestamp = eventTimestamp;
+        this.eventId = requireNonBlank(eventId, "eventId");
+        this.account = Objects.requireNonNull(
+                account,
+                "account must not be null"
+        );
+        this.type = Objects.requireNonNull(
+                type,
+                "type must not be null"
+        );
+        this.amount = requirePositiveAmount(amount);
+        this.currency = requireNonBlank(currency, "currency")
+                .toUpperCase(Locale.ROOT);
+        this.eventTimestamp = Objects.requireNonNull(
+                eventTimestamp,
+                "eventTimestamp must not be null"
+        );
     }
 
     @PrePersist
@@ -142,6 +153,36 @@ public class AccountTransaction {
         }
 
         return Objects.equals(eventId, transaction.eventId);
+    }
+
+    private static String requireNonBlank(
+            String value,
+            String fieldName
+    ) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(
+                    fieldName + " must not be blank"
+            );
+        }
+
+        return value.trim();
+    }
+
+    private static BigDecimal requirePositiveAmount(
+            BigDecimal amount
+    ) {
+        Objects.requireNonNull(
+                amount,
+                "amount must not be null"
+        );
+
+        if (amount.signum() <= 0) {
+            throw new IllegalArgumentException(
+                    "amount must be greater than zero"
+            );
+        }
+
+        return amount;
     }
 
     @Override

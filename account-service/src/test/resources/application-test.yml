@@ -19,6 +19,12 @@ spring:
     console:
       enabled: false
 
+management:
+  endpoint:
+    health:
+      show-components: always
+      show-details: always
+
 logging:
   level:
     org.hibernate.SQL: WARN

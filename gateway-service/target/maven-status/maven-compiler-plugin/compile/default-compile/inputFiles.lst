@@ -2,11 +2,11 @@
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/EventController.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/GlobalExceptionHandler.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/ApiErrorResponse.java
-/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/EventMetadataResponse.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/EventResponse.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/SubmitEventRequest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/client/AccountGateway.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/client/AccountServiceClient.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/client/AccountServiceResponseValidator.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/client/AccountTransactionResponse.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/client/ApplyTransactionRequest.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/config/HttpClientConfiguration.java

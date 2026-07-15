@@ -20,8 +20,7 @@ spring:
 
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
 
 server:
   port: 8080
@@ -29,7 +28,7 @@ server:
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}
 
   otlp:
     tracing:
@@ -50,8 +49,8 @@ management:
 
   endpoint:
     health:
-      show-components: always
-      show-details: always
+      show-components: when-authorized
+      show-details: when-authorized
 
   health:
     db:
@@ -63,6 +62,8 @@ management:
 
 account-service:
   base-url: http://localhost:8081
+  connect-timeout: 2s
+  read-timeout: 3s
 
 logging:
   structured:
