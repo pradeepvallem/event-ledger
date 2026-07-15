@@ -7,6 +7,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 import lombok.Getter;
 
@@ -25,6 +26,14 @@ public class Account {
     private String accountId;
 
     @Column(
+            name = "currency",
+            nullable = false,
+            updatable = false,
+            length = 3
+    )
+    private String currency;
+
+    @Column(
             name = "created_at",
             nullable = false,
             updatable = false
@@ -35,8 +44,10 @@ public class Account {
         // Required by JPA.
     }
 
-    public Account(String accountId) {
-        this.accountId = accountId;
+    public Account(String accountId, String currency) {
+        this.accountId = Objects.requireNonNull(accountId);
+        this.currency = Objects.requireNonNull(currency)
+                .toUpperCase(Locale.ROOT);
     }
 
     @PrePersist

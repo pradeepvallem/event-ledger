@@ -30,10 +30,10 @@ public interface AccountTransactionRepository
     );
 
     @Query("""
-        select coalesce(sum(transaction.amount), 0)
-        from AccountTransaction transaction
-        where transaction.account.accountId = :accountId
-          and transaction.type = :type
+        select coalesce(sum(t.amount), 0)
+        from AccountTransaction t
+        where t.account.accountId = :accountId
+          and t.type = :type
         """)
     BigDecimal sumAmountByAccountIdAndType(
             @Param("accountId") String accountId,
