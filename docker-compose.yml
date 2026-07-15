@@ -6,7 +6,10 @@ services:
 
     image: event-ledger/account-service:1.0.0
 
-    container_name: event-ledger-account-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
     environment:
       SPRING_APPLICATION_NAME: account-service
@@ -51,7 +54,10 @@ services:
 
     image: event-ledger/gateway-service:1.0.0
 
-    container_name: event-ledger-gateway-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
     environment:
       SPRING_APPLICATION_NAME: gateway-service

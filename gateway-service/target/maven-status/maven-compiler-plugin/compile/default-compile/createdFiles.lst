@@ -3,11 +3,11 @@ com/eventledger/gateway/exception/EventNotAppliedException.class
 com/eventledger/gateway/exception/EventNotFoundException.class
 com/eventledger/gateway/service/EventReplayValidator.class
 com/eventledger/gateway/domain/TransactionType.class
-com/eventledger/gateway/api/dto/EventMetadataResponse.class
 com/eventledger/gateway/service/EventMapper.class
 com/eventledger/gateway/GatewayServiceApplication.class
 com/eventledger/gateway/config/HttpClientConfiguration.class
 com/eventledger/gateway/service/EventService.class
+com/eventledger/gateway/client/AccountServiceResponseValidator.class
 com/eventledger/gateway/api/dto/ApiErrorResponse.class
 com/eventledger/gateway/service/NormalizedEvent.class
 com/eventledger/gateway/client/AccountServiceClient.class

@@ -25,3 +25,9 @@ account-service:
 logging:
   level:
     org.hibernate.SQL: WARN
+
+management:
+  endpoint:
+    health:
+      show-components: always
+      show-details: always

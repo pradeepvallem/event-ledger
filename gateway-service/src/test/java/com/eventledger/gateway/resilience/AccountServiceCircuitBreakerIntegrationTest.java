@@ -49,7 +49,11 @@ class AccountServiceCircuitBreakerIntegrationTest {
     private static final String ACCOUNT_ID = "acct-cb";
 
     private static final WireMockServer wireMockServer =
-            new WireMockServer(options().dynamicPort());
+            new WireMockServer(
+                    options()
+                            .dynamicPort()
+                            .globalTemplating(true)
+            );
 
     static {
         /*
@@ -458,10 +462,6 @@ class AccountServiceCircuitBreakerIntegrationTest {
     }
 
     private void stubAccountServiceSuccess() {
-        /*
-         * Do not add a strict request Content-Type matcher here.
-         * Spring may send "application/json" or include a charset.
-         */
         wireMockServer.stubFor(
                 post(
                         urlPathMatching(
@@ -478,7 +478,7 @@ class AccountServiceCircuitBreakerIntegrationTest {
                                         .withBody(
                                                 """
                                                 {
-                                                  "eventId": "response-event",
+                                                  "eventId": "{{jsonPath request.body '$.eventId'}}",
                                                   "accountId": "acct-cb",
                                                   "type": "CREDIT",
                                                   "amount": 10.00,
