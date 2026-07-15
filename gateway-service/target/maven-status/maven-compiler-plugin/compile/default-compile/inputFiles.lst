@@ -16,6 +16,7 @@
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/exception/AccountServiceUnavailableException.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/exception/ConflictingEventException.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/exception/EventNotFoundException.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/observability/EventMetrics.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/repository/EventRecordRepository.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/service/EventMapper.java
 /Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/service/EventPersistenceService.java

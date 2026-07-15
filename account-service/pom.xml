@@ -49,6 +49,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Micrometer tracing backed by OpenTelemetry -->
         <dependency>
             <groupId>io.micrometer</groupId>

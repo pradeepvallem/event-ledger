@@ -27,14 +27,74 @@ server:
   port: 8080
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  otlp:
+    tracing:
+      export:
+        enabled: false
+
   endpoints:
     web:
+      base-path: /
       exposure:
-        include: health,info,metrics
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
+          - circuitbreakers
+          - circuitbreakerevents
 
   endpoint:
     health:
+      show-components: always
       show-details: always
+
+  health:
+    db:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 account-service:
   base-url: http://localhost:8081
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+    ecs:
+      service:
+        name: ${spring.application.name}
+        version: 1.0.0
+        environment: local
+
+    json:
+      stacktrace:
+        root: first
+        max-length: 4096
+        max-throwable-depth: 20
+        include-common-frames: false
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: count_based
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        permitted-number-of-calls-in-half-open-state: 2
+        wait-duration-in-open-state: 10s
+        automatic-transition-from-open-to-half-open-enabled: true
+
+    instances:
+      accountService:
+        base-config: default

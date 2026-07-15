@@ -504,6 +504,17 @@ class AccountControllerIntegrationTest {
                 );
     }
 
+    @Test
+    @DisplayName("exposes Account Service health with database status")
+    void shouldExposeAccountServiceHealth() throws Exception {
+        mockMvc.perform(get("/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(
+                        jsonPath("$.components.db.status").value("UP")
+                );
+    }
+
     private org.springframework.test.web.servlet.ResultActions
     submitTransaction(
             String requestBody,

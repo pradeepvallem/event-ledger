@@ -16,6 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,9 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountTransactionRepository transactionRepository;
+
+    private static final Logger log =
+            LoggerFactory.getLogger(AccountService.class);
 
     public AccountService(
             AccountRepository accountRepository,
@@ -42,11 +48,21 @@ public class AccountService {
             String accountId,
             ApplyTransactionRequest request
     ) {
+        log.atInfo()
+                .addKeyValue("eventId", request.eventId())
+                .addKeyValue("accountId", accountId)
+                .addKeyValue("transactionType", request.type())
+                .log("Applying transaction");
+
         String normalizedAccountId = normalizeRequired(accountId, "accountId");
         String normalizedEventId = normalizeRequired(
                 request.eventId(),
                 "eventId"
         );
+        log.atInfo()
+                .addKeyValue("eventId", normalizedEventId)
+                .addKeyValue("idempotentReplay", true)
+                .log("Returning existing transaction");
         String normalizedCurrency = request.currency()
                 .trim()
                 .toUpperCase(Locale.ROOT);
@@ -100,6 +116,12 @@ public class AccountService {
 
         AccountTransaction savedTransaction =
                 transactionRepository.save(transaction);
+
+        log.atInfo()
+                .addKeyValue("eventId", savedTransaction.getEventId())
+                .addKeyValue("accountId", account.getAccountId())
+                .addKeyValue("transactionType", savedTransaction.getType())
+                .log("Transaction persisted");
 
         return new TransactionApplicationResult(
                 toTransactionResponse(savedTransaction, false),

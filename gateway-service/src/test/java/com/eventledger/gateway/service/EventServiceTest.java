@@ -9,6 +9,7 @@ import com.eventledger.gateway.domain.EventStatus;
 import com.eventledger.gateway.domain.TransactionType;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
 import com.eventledger.gateway.exception.EventNotFoundException;
+import com.eventledger.gateway.observability.EventMetrics;
 import com.eventledger.gateway.repository.EventRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +62,9 @@ class EventServiceTest {
     @Mock
     private EventReplayValidator replayValidator;
 
+    @Mock
+    private EventMetrics eventMetrics;
+
     private EventService eventService;
 
     @BeforeEach
@@ -71,7 +75,8 @@ class EventServiceTest {
                 accountGateway,
                 metadataConverter,
                 eventMapper,
-                replayValidator
+                replayValidator,
+                eventMetrics
         );
     }
 
@@ -127,6 +132,12 @@ class EventServiceTest {
                 .markApplied(EVENT_ID);
         verify(persistenceService, never())
                 .markFailed(any(), any());
+        verify(eventMetrics).recordReceived();
+        verify(eventMetrics).recordApplied();
+
+        verify(eventMetrics, never()).recordFailed();
+        verify(eventMetrics, never()).recordReplayed();
+        verify(eventMetrics, never()).recordConflict();
     }
 
     @Test
@@ -166,6 +177,10 @@ class EventServiceTest {
                 accountGateway,
                 metadataConverter
         );
+        verify(eventMetrics).recordReplayed();
+
+        verify(eventMetrics, never()).recordReceived();
+        verify(eventMetrics, never()).recordApplied();
     }
 
     @Test
@@ -214,6 +229,10 @@ class EventServiceTest {
                 );
 
         verifyNoInteractions(accountGateway);
+        verify(eventMetrics).recordReplayed();
+
+        verify(eventMetrics, never()).recordReceived();
+        verify(eventMetrics, never()).recordApplied();
     }
 
     @Test
@@ -255,6 +274,10 @@ class EventServiceTest {
 
         verify(persistenceService, never())
                 .markApplied(any());
+        verify(eventMetrics).recordReceived();
+        verify(eventMetrics).recordFailed();
+
+        verify(eventMetrics, never()).recordApplied();
     }
 
     @Test
