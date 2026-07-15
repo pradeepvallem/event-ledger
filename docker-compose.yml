@@ -1,0 +1,101 @@
+services:
+  account-service:
+    build:
+      context: .
+      dockerfile: account-service/Dockerfile
+
+    image: event-ledger/account-service:1.0.0
+
+    container_name: event-ledger-account-service
+
+    environment:
+      SPRING_APPLICATION_NAME: account-service
+
+      SERVER_PORT: 8081
+
+      SPRING_DATASOURCE_URL: "jdbc:h2:mem:accountdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+
+      MANAGEMENT_ENDPOINTS_WEB_BASE_PATH: /
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: >-
+        health,info,metrics,prometheus
+
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"
+
+      JAVA_OPTS: >-
+        -XX:MaxRAMPercentage=75.0
+        -XX:+ExitOnOutOfMemoryError
+        -Duser.timezone=UTC
+
+    ports:
+      - "8081:8081"
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:8081/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+    networks:
+      - event-ledger-network
+
+    security_opt:
+      - no-new-privileges:true
+
+  gateway-service:
+    build:
+      context: .
+      dockerfile: gateway-service/Dockerfile
+
+    image: event-ledger/gateway-service:1.0.0
+
+    container_name: event-ledger-gateway-service
+
+    environment:
+      SPRING_APPLICATION_NAME: gateway-service
+
+      SERVER_PORT: 8080
+
+      SPRING_DATASOURCE_URL: "jdbc:h2:mem:gatewaydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+
+      # Docker DNS resolves "account-service" to the Account Service container.
+      ACCOUNT_SERVICE_BASE_URL: http://account-service:8081
+
+      MANAGEMENT_ENDPOINTS_WEB_BASE_PATH: /
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: >-
+        health,info,metrics,prometheus,circuitbreakers,circuitbreakerevents
+
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: "1.0"
+
+      JAVA_OPTS: >-
+        -XX:MaxRAMPercentage=75.0
+        -XX:+ExitOnOutOfMemoryError
+        -Duser.timezone=UTC
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      account-service:
+        condition: service_healthy
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+    restart: unless-stopped
+
+    networks:
+      - event-ledger-network
+
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  event-ledger-network:
+    driver: bridge
