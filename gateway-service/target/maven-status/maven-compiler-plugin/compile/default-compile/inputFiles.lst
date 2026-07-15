@@ -1,0 +1,8 @@
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/GatewayServiceApplication.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/EventMetadataResponse.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/EventResponse.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/api/dto/SubmitEventRequest.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/domain/EventRecord.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/domain/EventStatus.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/domain/TransactionType.java
+/Users/pradeepvallam/Downloads/event-ledger/gateway-service/src/main/java/com/eventledger/gateway/repository/EventRecordRepository.java
