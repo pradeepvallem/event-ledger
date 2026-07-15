@@ -107,6 +107,10 @@ public class AccountServiceClient implements AccountGateway {
                 )
                 .log("Circuit breaker fallback invoked");
 
+        if (throwable instanceof HttpClientErrorException exception) {
+            throw exception;
+        }
+
         if (throwable instanceof AccountServiceUnavailableException exception) {
             throw exception;
         }
