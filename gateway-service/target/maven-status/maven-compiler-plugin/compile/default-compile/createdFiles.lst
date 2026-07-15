@@ -19,6 +19,7 @@ com/eventledger/gateway/exception/ConflictingEventException.class
 com/eventledger/gateway/domain/EventRecord.class
 com/eventledger/gateway/service/EventService$SavedEvent.class
 com/eventledger/gateway/exception/AccountServiceUnavailableException.class
+com/eventledger/gateway/observability/EventMetrics.class
 com/eventledger/gateway/api/dto/SubmitEventRequest.class
 com/eventledger/gateway/api/dto/EventResponse.class
 com/eventledger/gateway/client/ApplyTransactionRequest.class

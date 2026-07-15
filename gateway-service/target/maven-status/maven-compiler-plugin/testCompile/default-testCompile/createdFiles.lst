@@ -1,5 +1,6 @@
 com/eventledger/gateway/service/EventMapperTest.class
 com/eventledger/gateway/api/EventControllerIntegrationTest.class
+com/eventledger/gateway/observability/EventMetricsTest.class
 com/eventledger/gateway/repository/EventRecordRepositoryTest.class
 com/eventledger/gateway/GatewayServiceApplicationTests.class
 com/eventledger/gateway/service/EventReplayValidatorTest.class

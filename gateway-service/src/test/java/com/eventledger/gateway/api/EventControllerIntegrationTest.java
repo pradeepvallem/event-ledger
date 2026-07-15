@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasItem;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -330,6 +331,48 @@ class EventControllerIntegrationTest {
                 .andExpect(
                         jsonPath("$.message")
                                 .value("Event not found: evt-missing")
+                );
+    }
+
+    @Test
+    @DisplayName("exposes Gateway health with database status")
+    void shouldExposeGatewayHealth() throws Exception {
+        mockMvc.perform(get("/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(
+                        jsonPath("$.components.db.status").value("UP")
+                );
+    }
+
+    @Test
+    @DisplayName("exposes custom Gateway event metrics")
+    void shouldExposeCustomEventMetrics() throws Exception {
+        when(accountGateway.applyTransaction(any()))
+                .thenReturn(accountResponse("evt-metric"));
+
+        mockMvc.perform(
+                        post("/events")
+                                .contentType("application/json")
+                                .content(validEventJson("evt-metric"))
+                )
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(
+                        get("/metrics/event.ledger.events")
+                )
+                .andExpect(status().isOk())
+                .andExpect(
+                        jsonPath("$.name")
+                                .value("event.ledger.events")
+                )
+                .andExpect(
+                        jsonPath("$.availableTags[*].tag")
+                                .value(hasItem("outcome"))
+                )
+                .andExpect(
+                        jsonPath("$.availableTags[*].tag")
+                                .value(hasItem("application"))
                 );
     }
 

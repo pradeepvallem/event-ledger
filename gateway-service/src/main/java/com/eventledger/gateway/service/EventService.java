@@ -5,11 +5,13 @@ import com.eventledger.gateway.api.dto.SubmitEventRequest;
 import com.eventledger.gateway.client.AccountGateway;
 import com.eventledger.gateway.domain.EventRecord;
 import com.eventledger.gateway.exception.AccountServiceUnavailableException;
+import com.eventledger.gateway.exception.ConflictingEventException;
 import com.eventledger.gateway.exception.EventNotFoundException;
 import com.eventledger.gateway.repository.EventRecordRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.eventledger.gateway.observability.EventMetrics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class EventService {
     private final MetadataConverter metadataConverter;
     private final EventMapper eventMapper;
     private final EventReplayValidator replayValidator;
+    private final EventMetrics eventMetrics;
 
     private static final Logger log =
             LoggerFactory.getLogger(EventService.class);
@@ -37,7 +40,8 @@ public class EventService {
             AccountGateway accountGateway,
             MetadataConverter metadataConverter,
             EventMapper eventMapper,
-            EventReplayValidator replayValidator
+            EventReplayValidator replayValidator,
+            EventMetrics eventMetrics
     ) {
         this.eventRepository = eventRepository;
         this.persistenceService = persistenceService;
@@ -45,6 +49,7 @@ public class EventService {
         this.metadataConverter = metadataConverter;
         this.eventMapper = eventMapper;
         this.replayValidator = replayValidator;
+        this.eventMetrics = eventMetrics;
     }
 
     public EventSubmissionResult submitEvent(
@@ -63,10 +68,22 @@ public class EventService {
 
 
         if (existing != null) {
-            replayValidator.validateIdenticalReplay(
-                    existing,
-                    normalized
-            );
+            try {
+                replayValidator.validateIdenticalReplay(
+                        existing,
+                        normalized
+                );
+            } catch (ConflictingEventException exception) {
+                eventMetrics.recordConflict();
+                throw exception;
+            }
+
+            eventMetrics.recordReplayed();
+
+            log.atInfo()
+                    .addKeyValue("eventId", normalized.eventId())
+                    .addKeyValue("idempotentReplay", true)
+                    .log("Returning existing event");
 
             return new EventSubmissionResult(
                     eventMapper.toResponse(existing, true),
@@ -78,10 +95,17 @@ public class EventService {
                 insertEventRaceSafely(normalized);
 
         if (!savedEvent.created()) {
-            replayValidator.validateIdenticalReplay(
-                    savedEvent.event(),
-                    normalized
-            );
+            try {
+                replayValidator.validateIdenticalReplay(
+                        savedEvent.event(),
+                        normalized
+                );
+            } catch (ConflictingEventException exception) {
+                eventMetrics.recordConflict();
+                throw exception;
+            }
+
+            eventMetrics.recordReplayed();
 
             return new EventSubmissionResult(
                     eventMapper.toResponse(
@@ -93,6 +117,7 @@ public class EventService {
         }
 
         EventRecord event = savedEvent.event();
+        eventMetrics.recordReceived();
         log.atInfo()
                 .addKeyValue("eventId", event.getEventId())
                 .addKeyValue("accountId", event.getAccountId())
@@ -101,6 +126,7 @@ public class EventService {
 
         try {
             accountGateway.applyTransaction(event);
+            eventMetrics.recordApplied();
 
             persistenceService.markApplied(event.getEventId());
 
@@ -121,6 +147,17 @@ public class EventService {
                     event.getEventId(),
                     exception.getMessage()
             );
+
+            eventMetrics.recordFailed();
+            log.atWarn()
+                    .addKeyValue("eventId", event.getEventId())
+                    .addKeyValue("accountId", event.getAccountId())
+                    .addKeyValue("eventStatus", "FAILED")
+                    .addKeyValue(
+                            "failureReason",
+                            exception.getMessage()
+                    )
+                    .log("Account Service call failed");
 
             throw exception;
         }
